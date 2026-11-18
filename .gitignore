@@ -1,0 +1,26 @@
+# Godot 4
+.godot/
+*.translation
+export_credentials.cfg
+
+# Build hasil ekspor
+build/
+*.apk
+*.aab
+*.idsig
+*.pck
+*.zip
+
+# Sistem operasi
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+
+# Cache Python
+__pycache__/
+*.pyc

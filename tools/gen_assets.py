@@ -1,0 +1,239 @@
+#!/usr/bin/env python3
+"""Membuat aset pixel art + SFX BERTAHAN secara prosedural.
+
+Jalankan: python3 tools/gen_assets.py
+Output:  assets/sprites/*.png  dan  assets/sfx/*.wav
+Tidak butuh library eksternal (PNG ditulis manual pakai zlib).
+"""
+import math
+import os
+import random
+import struct
+import wave
+import zlib
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SPRITE_DIR = os.path.join(ROOT, "assets", "sprites")
+SFX_DIR = os.path.join(ROOT, "assets", "sfx")
+
+OUTLINE = (18, 22, 16, 255)
+
+
+# ---------------------------------------------------------------- PNG encoder
+def write_png(path, w, h, px):
+    raw = b"".join(
+        b"\x00" + bytes(v for x in range(w) for v in px[y][x]) for y in range(h))
+
+    def chunk(tag, data):
+        return (struct.pack(">I", len(data)) + tag + data
+                + struct.pack(">I", zlib.crc32(tag + data) & 0xFFFFFFFF))
+
+    out = b"\x89PNG\r\n\x1a\n"
+    out += chunk(b"IHDR", struct.pack(">IIBBBBB", w, h, 8, 6, 0, 0, 0))
+    out += chunk(b"IDAT", zlib.compress(raw, 9))
+    out += chunk(b"IEND", b"")
+    with open(path, "wb") as f:
+        f.write(out)
+
+
+def canvas(w, h):
+    return [[(0, 0, 0, 0) for _ in range(w)] for _ in range(h)]
+
+
+def put(px, x, y, col):
+    if 0 <= y < len(px) and 0 <= x < len(px[0]):
+        px[y][x] = col
+
+
+def disc(px, cx, cy, r, col):
+    for y in range(len(px)):
+        for x in range(len(px[0])):
+            if (x - cx) ** 2 + (y - cy) ** 2 <= r * r:
+                px[y][x] = col
+
+
+def rect(px, x0, y0, x1, y1, col):
+    for y in range(y0, y1 + 1):
+        for x in range(x0, x1 + 1):
+            put(px, x, y, col)
+
+
+def outline(px, col=OUTLINE):
+    h, w = len(px), len(px[0])
+    src = [[px[y][x] for x in range(w)] for y in range(h)]
+    for y in range(h):
+        for x in range(w):
+            if src[y][x][3] != 0:
+                continue
+            for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                nx, ny = x + dx, y + dy
+                if 0 <= nx < w and 0 <= ny < h and src[ny][nx][3] != 0:
+                    px[y][x] = col
+                    break
+
+
+# ------------------------------------------------------------------- sprites
+def make_survivor():
+    px = canvas(16, 16)
+    disc(px, 8, 9, 5.4, (43, 96, 132, 255))      # badan / jaket biru
+    disc(px, 8, 9, 3.4, (66, 140, 184, 255))     # highlight jaket
+    rect(px, 11, 8, 15, 9, (52, 52, 58, 255))    # laras pistol
+    rect(px, 13, 8, 15, 8, (96, 96, 104, 255))   # kilau laras
+    disc(px, 8, 6, 3.1, (196, 148, 108, 255))    # kepala (top-down)
+    disc(px, 8, 5, 2.2, (72, 54, 40, 255))       # rambut
+    outline(px)
+    return px
+
+
+def make_zombie(body, head, arms, size=16, r=5.6):
+    px = canvas(size, size)
+    c = size / 2.0
+    disc(px, c, c + 1.2, r, body)
+    disc(px, c, c + 1.2, r * 0.55, head)
+    rect(px, int(c - r) - 1, int(c), int(c - r) + 1, int(c) + 3, arms)
+    rect(px, int(c + r) - 1, int(c), int(c + r) + 1, int(c) + 3, arms)
+    outline(px)
+    return px
+
+
+def make_brute():
+    px = canvas(24, 24)
+    disc(px, 12, 13, 8.6, (93, 64, 55, 255))
+    disc(px, 12, 13, 5.2, (121, 85, 72, 255))
+    disc(px, 12, 9, 4.0, (161, 136, 127, 255))
+    rect(px, 2, 13, 6, 18, (78, 52, 46, 255))
+    rect(px, 18, 13, 22, 18, (78, 52, 46, 255))
+    outline(px)
+    return px
+
+
+def make_coin():
+    px = canvas(12, 12)
+    disc(px, 6, 6, 5.0, (255, 213, 79, 255))
+    disc(px, 6, 6, 3.4, (255, 179, 0, 255))
+    disc(px, 6, 5, 1.8, (255, 236, 179, 255))
+    outline(px)
+    return px
+
+
+def make_medkit():
+    px = canvas(14, 12)
+    rect(px, 1, 2, 12, 10, (236, 239, 241, 255))
+    rect(px, 1, 2, 12, 3, (207, 216, 220, 255))
+    rect(px, 5, 4, 8, 9, (229, 57, 53, 255))
+    rect(px, 3, 6, 10, 7, (229, 57, 53, 255))
+    outline(px)
+    return px
+
+
+def make_bullet():
+    px = canvas(4, 8)
+    rect(px, 0, 1, 3, 6, (255, 224, 130, 255))
+    rect(px, 1, 0, 2, 0, (255, 255, 255, 255))
+    outline(px, (120, 90, 20, 255))
+    return px
+
+
+def make_ground():
+    px = canvas(32, 32)
+    rnd = random.Random(7)
+    base = (35, 40, 46, 255)
+    for y in range(32):
+        for x in range(32):
+            v = rnd.choice([0, 0, 0, 1, -1])
+            px[y][x] = (base[0] + v * 3, base[1] + v * 3, base[2] + v * 3, 255)
+    for _ in range(5):
+        x, y = rnd.randrange(2, 29), rnd.randrange(2, 29)
+        rect(px, x, y, x + rnd.randrange(1, 4), y, (30, 34, 39, 255))
+    return px
+
+
+# --------------------------------------------------------------------- audio
+SR = 22050
+
+
+def env(i, n, attack=0.01, release=0.6):
+    a = int(SR * attack)
+    if i < a:
+        return i / max(a, 1)
+    tail = (n - i) / max(n * release, 1)
+    return max(0.0, min(1.0, tail))
+
+
+def tone(freq_from, freq_to, dur, kind="square", vol=0.5, noise=0.0):
+    n = int(SR * dur)
+    out = []
+    phase = 0.0
+    rnd = random.Random(3)
+    for i in range(n):
+        f = freq_from + (freq_to - freq_from) * (i / n)
+        phase += f / SR
+        if kind == "square":
+            s = 1.0 if math.sin(2 * math.pi * phase) > 0 else -1.0
+        elif kind == "saw":
+            s = 2.0 * (phase - math.floor(phase + 0.5))
+        else:
+            s = math.sin(2 * math.pi * phase)
+        if noise > 0:
+            s = s * (1 - noise) + (rnd.uniform(-1, 1) * noise)
+        out.append(s * vol * env(i, n))
+    return out
+
+
+def mix(*layers):
+    n = max(len(x) for x in layers)
+    out = [0.0] * n
+    for layer in layers:
+        for i, v in enumerate(layer):
+            out[i] += v
+    return [max(-1.0, min(1.0, v)) for v in out]
+
+
+def write_wav(path, samples):
+    with wave.open(path, "wb") as w:
+        w.setnchannels(1)
+        w.setsampwidth(2)
+        w.setframerate(SR)
+        w.writeframes(b"".join(
+            struct.pack("<h", int(max(-1.0, min(1.0, s)) * 32000)) for s in samples))
+
+
+def build_audio():
+    os.makedirs(SFX_DIR, exist_ok=True)
+    write_wav(os.path.join(SFX_DIR, "shoot.wav"),
+              mix(tone(900, 320, 0.07, "square", 0.35), tone(0, 0, 0.07, "sine", 0.0, 0.5)))
+    write_wav(os.path.join(SFX_DIR, "hit.wav"),
+              tone(240, 90, 0.06, "sine", 0.5, 0.7))
+    write_wav(os.path.join(SFX_DIR, "dead.wav"),
+              mix(tone(320, 110, 0.20, "saw", 0.35), tone(0, 0, 0.20, "sine", 0.0, 0.35)))
+    write_wav(os.path.join(SFX_DIR, "hurt.wav"),
+              mix(tone(140, 60, 0.26, "sine", 0.6), tone(0, 0, 0.26, "sine", 0.0, 0.45)))
+    write_wav(os.path.join(SFX_DIR, "pickup.wav"),
+              tone(660, 990, 0.10, "square", 0.32))
+    write_wav(os.path.join(SFX_DIR, "upgrade.wav"),
+              mix(tone(523, 523, 0.09, "square", 0.3),
+                  [0.0] * int(SR * 0.09) + tone(659, 659, 0.09, "square", 0.3),
+                  [0.0] * int(SR * 0.18) + tone(784, 784, 0.16, "square", 0.3)))
+
+
+def main():
+    os.makedirs(SPRITE_DIR, exist_ok=True)
+    sprites = {
+        "survivor.png": make_survivor(),
+        "zombie_walker.png": make_zombie((107, 142, 35, 255), (85, 107, 47, 255), (85, 107, 47, 255)),
+        "zombie_runner.png": make_zombie((184, 198, 43, 255), (154, 168, 33, 255), (154, 168, 33, 255), 16, 4.9),
+        "zombie_brute.png": make_brute(),
+        "coin.png": make_coin(),
+        "medkit.png": make_medkit(),
+        "bullet.png": make_bullet(),
+        "ground.png": make_ground(),
+    }
+    for name, px in sprites.items():
+        write_png(os.path.join(SPRITE_DIR, name), len(px[0]), len(px), px)
+        print("sprite:", name, f"{len(px[0])}x{len(px)}")
+    build_audio()
+    print("sfx: 6 file")
+
+
+if __name__ == "__main__":
+    main()
