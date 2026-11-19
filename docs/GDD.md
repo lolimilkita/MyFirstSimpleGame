@@ -1,4 +1,6 @@
-# GDD Ringkas — "BERTAHAN" (endless zombie shooter)
+# GDD Ringkas — MyFirstSimpleGame (endless zombie shooter)
+
+> Judul kerja internal saat pengembangan: **BERTAHAN**. Repo: `MyFirstSimpleGame`.
 
 **Versi:** 0.1 (pra-produksi) · **Target:** Android, portrait 9:16, satu tangan · **Engine:** Godot 4.7.2, renderer Compatibility
 

@@ -1,6 +1,6 @@
-# BERTAHAN
+# MyFirstSimpleGame
 
-Game mobile 2D *endless survival* bertema zombie. Geser satu jari untuk bergerak — pistol menembak
+Game mobile 2D *endless survival* bertema zombie (judul kerja internal: *BERTAHAN*). Geser satu jari untuk bergerak — pistol menembak
 sendiri ke zombie terdekat. Bertahan selama mungkin, kumpulkan skor, pecahkan rekormu.
 
 ![Bertahan](docs/04-i2-main.png)
@@ -43,11 +43,11 @@ godot --path .             # langsung mainkan
 ## Build APK
 
 Butuh JDK 17 + Android SDK (build-tools 36.1.0, platform android-36). Preset ekspor ada di
-`export_presets.cfg` (tipe Android, arm64-v8a + x86_64, package `com.example.bertahan`).
+`export_presets.cfg` (tipe Android, arm64-v8a + x86_64, package `com.example.myfirstsimplegame`).
 
 ```bash
 godot --headless --path . --import          # wajib sekali setelah menambah aset
-godot --headless --path . --export-debug "Android" build/bertahan.apk
+godot --headless --path . --export-debug "Android" build/MyFirstSimpleGame.apk
 ```
 
 > Ganti `package/unique_name` di `export_presets.cfg` sebelum publikasi.
