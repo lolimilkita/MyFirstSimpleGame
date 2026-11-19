@@ -31,7 +31,8 @@ func _physics_process(delta: float) -> void:
 	if game == null or game.player == null or not is_instance_valid(game.player):
 		return
 	var d: Vector2 = game.player.position - position
-	if d.length() < MAGNET and d.length() > 1.0:
+	var reach: float = game.player.magnet
+	if d.length() < reach and d.length() > 1.0:
 		position += d.normalized() * (240.0 * delta)
 
 

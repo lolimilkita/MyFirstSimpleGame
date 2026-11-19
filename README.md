@@ -15,6 +15,7 @@ Dibuat dengan **Godot 4.7.2** (renderer Compatibility), target Android portrait 
 |---|---|
 | **Genre** | Endless arena survival |
 | **Kontrol** | Drag 1:1 di mana saja (satu tangan), auto-aim + auto-fire |
+| **Ikon** | 512×512 + adaptive foreground/background 432×432 (dibuat `tools/gen_assets.py`) |
 | **Loop** | Geser → tembak zombie → ambil koin/medkit → naik level senjata → mati → ulang |
 | **Skor** | kill × nilai (10/15/40) + bonus koin + detik bertahan |
 | **Rekor** | tersimpan lokal di `user://save.cfg` |
@@ -22,12 +23,15 @@ Dibuat dengan **Godot 4.7.2** (renderer Compatibility), target Android portrait 
 **Zombie:** walker (lambat, 1 HP) · runner (cepat, muncul setelah 45 s) · brute (6 HP, muncul setelah 90 s).
 HP zombie naik seiring waktu, dan horde 10 zombie menyerbu tiap 75 detik dengan tanda panah merah.
 
-**Upgrade dalam satu run:** 15 kill → tembak lebih cepat · 40 → 2 peluru · 80 → peluru tembus ·
-140 → lebih cepat · 220 → 3 peluru.
+**Upgrade dalam satu run:** setiap naik level, permainan berhenti dan muncul **3 kartu acak** —
+pilih satu (Tembak Cepat, Peluru Ganda, Peluru Tembus, Kaki Ringan, Darah Tebal, Magnet, Peluru Besar,
+Bidik Jauh). Ambang level: 8 kill pertama, lalu `kill + 6 + level×2`. Pola ini mengikuti Brotato
+(4 pilihan per level, bertingkat) dan Vampire Survivors/Archero (pause → pilih 1 dari beberapa kartu).
 
 ## Status
 
-Proyek berada di **iterasi I2**: semua sistem inti jalan dan APK debug sudah diuji di emulator.
+Proyek berada di **iterasi I3**: kartu upgrade acak dan ikon 512/adaptive sudah masuk, APK debug
+teruji di emulator.
 Yang **belum**: tes di HP fisik, tuning kurva akhir, tutorial, toggle efek darah, ikon adaptif,
 dan signing rilis. Detail ada di [docs/devlog-i2.md](docs/devlog-i2.md).
 

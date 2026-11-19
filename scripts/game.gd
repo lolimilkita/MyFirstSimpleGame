@@ -21,12 +21,15 @@ const Z_TYPES := {
 	"brute": {"hp": 6, "speed": 56.0, "score": 40, "scale": 2.0, "radius": 22.0},
 }
 
-const UPGRADES := [
-	{"kills": 15, "label": "TEMBAK LEBIH CEPAT"},
-	{"kills": 40, "label": "TEMBAKAN GANDA"},
-	{"kills": 80, "label": "PELURU TEMBUS"},
-	{"kills": 140, "label": "TEMBAK LEBIH CEPAT"},
-	{"kills": 220, "label": "TEMBAKAN TRIPEL"},
+const UPGRADE_POOL := [
+	{"id": "fire_rate", "title": "TEMBAK CEPAT", "desc": "-18% jeda tembak", "max": 5, "weight": 3, "color": Color("ffb74d")},
+	{"id": "multishot", "title": "PELURU GANDA", "desc": "+1 peluru setiap tembakan", "max": 2, "weight": 2, "color": Color("4fc3f7")},
+	{"id": "pierce", "title": "PELURU TEMBUS", "desc": "Peluru menembus +1 zombie", "max": 3, "weight": 2, "color": Color("ba68c8")},
+	{"id": "speed", "title": "KAKI RINGAN", "desc": "+12% kecepatan gerak", "max": 3, "weight": 3, "color": Color("81c784")},
+	{"id": "max_hp", "title": "DARAH TEBAL", "desc": "+1 nyawa maksimal & pulihkan 1", "max": 2, "weight": 2, "color": Color("e57373")},
+	{"id": "magnet", "title": "MAGNET", "desc": "Tarik koin +60% lebih jauh", "max": 2, "weight": 2, "color": Color("ffd54f")},
+	{"id": "damage", "title": "PELURU BESAR", "desc": "+1 damage per peluru", "max": 3, "weight": 2, "color": Color("ff8a65")},
+	{"id": "range", "title": "BIDIK JAUH", "desc": "+18% jangkauan tembak", "max": 3, "weight": 1, "color": Color("90caf9")},
 ]
 
 const MAX_ZOMBIES := 55
@@ -56,7 +59,11 @@ var kill_points := 0
 var bonus_points := 0
 var score := 0
 var best := 0
-var tier := 0
+var _stacks := {}
+var choosing := false
+var options: Array = []
+var level := 1
+var next_level := 8
 var _horde_busy := false
 var _dbg := false
 var _maxt := 0.0
@@ -119,9 +126,9 @@ func _process(delta: float) -> void:
 		var hp := -1
 		if player != null:
 			hp = player.hp
-		print("[dbg] t=%.1f score=%d kills=%d z=%d p=%d hp=%d tier=%d run=%s" % [
+		print("[dbg] t=%.1f score=%d kills=%d z=%d p=%d hp=%d lv=%d run=%s" % [
 			elapsed, score, kills, zombies_root.get_child_count(),
-			pickups_root.get_child_count(), hp, tier, running])
+			pickups_root.get_child_count(), hp, level, running])
 
 
 func current_interval() -> float:
@@ -218,17 +225,66 @@ func on_zombie_killed(pos: Vector2, value: int) -> void:
 	kills += 1
 	kill_points += value
 	_sfx("dead", -8.0)
-	_check_tiers()
 	_maybe_drop(pos)
+	if kills >= next_level and not choosing:
+		_level_up()
 
 
-func _check_tiers() -> void:
-	while tier < UPGRADES.size() and kills >= int(UPGRADES[tier]["kills"]):
-		tier += 1
-		if player != null:
-			player.apply_tier(tier)
-		hud.toast(str(UPGRADES[tier - 1]["label"]))
-		_sfx("upgrade", -3.0)
+func _level_up() -> void:
+	options = _roll_upgrades(3)
+	if options.is_empty():
+		return
+	choosing = true
+	hud.show_upgrades(options)
+	get_tree().paused = true
+	if OS.is_debug_build() and OS.get_environment("BT_AUTOPICK") == "1":
+		await get_tree().create_timer(0.2, true).timeout
+		if choosing:
+			choose_upgrade(randi() % options.size())
+
+
+func _roll_upgrades(n: int) -> Array:
+	var pool: Array = []
+	for u in UPGRADE_POOL:
+		if int(_stacks.get(u["id"], 0)) < int(u["max"]):
+			pool.append(u)
+	var out: Array = []
+	while out.size() < n and not pool.is_empty():
+		var total := 0
+		for u in pool:
+			total += int(u["weight"])
+		var r := randi() % total
+		var acc := 0
+		var pick := 0
+		for i in pool.size():
+			acc += int(pool[i]["weight"])
+			if r < acc:
+				pick = i
+				break
+		out.append(pool[pick])
+		pool.remove_at(pick)
+	return out
+
+
+func choose_upgrade(index: int) -> void:
+	if not choosing or index < 0 or index >= options.size():
+		return
+	var u: Dictionary = options[index]
+	var id := String(u["id"])
+	_stacks[id] = int(_stacks.get(id, 0)) + 1
+	player.apply_upgrade(id, int(_stacks[id]))
+	_sfx("upgrade", -3.0)
+	hud.toast("+" + String(u["title"]))
+	level += 1
+	next_level = kills + 6 + level * 2
+	if _dbg:
+		print("[dbg] PICK %s (lv %d) fire=%.2f shots=%d pierce=%d dmg=%d spd=%.2f hp=%d/%d" % [
+			id, level, player.fire_interval, player.shots, player.pierce,
+			player.damage, player.move_mult, player.hp, player.max_hp])
+	choosing = false
+	options = []
+	hud.hide_upgrades()
+	get_tree().paused = false
 
 
 func add_bonus(points: int) -> void:
@@ -237,6 +293,10 @@ func add_bonus(points: int) -> void:
 
 func _on_player_died() -> void:
 	running = false
+	choosing = false
+	options = []
+	hud.hide_upgrades()
+	get_tree().paused = false
 	if score > best:
 		best = score
 		_save_best(best)
@@ -260,7 +320,13 @@ func restart() -> void:
 	kill_points = 0
 	bonus_points = 0
 	score = 0
-	tier = 0
+	_stacks.clear()
+	level = 1
+	next_level = 8
+	choosing = false
+	options = []
+	get_tree().paused = false
+	hud.hide_upgrades()
 	_horde_busy = false
 	running = true
 	player.reset()

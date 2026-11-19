@@ -6,6 +6,7 @@ const MAX_RANGE := 320.0
 
 var direction := Vector2.RIGHT
 var pierce := 0
+var damage := 1
 var traveled := 0.0
 var _hit_ids := {}
 
@@ -30,7 +31,7 @@ func _on_area_entered(area: Area2D) -> void:
 	if _hit_ids.has(id):
 		return
 	_hit_ids[id] = true
-	area.hit(1)
+	area.hit(damage)
 	if pierce > 0:
 		pierce -= 1
 	else:

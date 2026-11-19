@@ -82,19 +82,29 @@ ini menjaga 60 fps di HP kelas menengah dan mencegah pemain mati karena "spawn d
 
 Larangan desain: **tidak boleh spawn dalam radius 200 px dari pemain** (kecuali horde burst yang sudah diberi tanda).
 
-## 6. Progresi dalam satu run
+## 6. Progresi dalam satu run — kartu upgrade
 
-Naik level senjata berdasarkan total kill (reset tiap run):
+**Referensi mekanisme:** Brotato menawarkan **4 pilihan upgrade** setiap level up, dengan 4 tingkat
+kelangkaan dan fitur reroll ([Brotato Wiki — Upgrades](https://brotato.wiki.spellsandguns.com/Upgrades)).
+Vampire Survivors/Archero memakai pola yang sama: permainan berhenti, muncul beberapa kartu acak,
+pemain memilih satu. Pola ini dipilih karena membuat tiap run berbeda tanpa menambah kontrol baru.
 
-| Kill | Upgrade |
-|---|---|
-| 15 | fire rate 0,32 s → 0,26 s |
-| 40 | multishot 2 (dua peluru sejajar) |
-| 80 | pierce 1 (peluru menembus 1 zombie) |
-| 140 | fire rate → 0,22 s |
-| 220 | multishot 3 |
+**Implementasi kita:** setiap naik level, permainan **pause** dan muncul **3 kartu acak**; ketuk satu
+untuk melanjutkan. Ambang level: 8 kill pertama, lalu `kill + 6 + level×2`.
 
-Tanpa sistem pilih-upgrade (roguelite) di v1 — itu menambah 2 layar UI dan 1 sistem state.
+| Kartu | Efek | Maks | Bobot |
+|---|---|---|---|
+| Tembak Cepat | jeda tembak −18% | 5 | 3 |
+| Peluru Ganda | +1 peluru per tembakan | 2 | 2 |
+| Peluru Tembus | menembus +1 zombie | 3 | 2 |
+| Kaki Ringan | +12% kecepatan gerak | 3 | 3 |
+| Darah Tebal | +1 nyawa maksimum | 2 | 2 |
+| Magnet | jangkauan tarik koin +60% | 2 | 2 |
+| Peluru Besar | +1 damage | 3 | 2 |
+| Bidik Jauh | +18% jangkauan | 3 | 1 |
+
+Bobot menentukan peluang muncul (bobot 3 = 3× lebih sering dari bobot 1). Kartu yang sudah penuh
+tidak masuk undian. Tidak ada reroll di v1 — ditunda agar UI tetap satu layar.
 
 ## 7. Rasa / juice (yang bikin nagih)
 
@@ -178,7 +188,8 @@ Tiga perubahan dari rencana awal, semuanya karena data, bukan selera:
    pemain; pemain diam pun tidak tersentuh selama 37 detik. Tidak ada tekanan = tidak ada game.
 2. **Spawn awal 1,1 s → 0,35 s** dan decay 0,96 → 0,93 per 10 detik, agar laju spawn melebihi
    laju tembak (≈2,9/detik) sehingga kawanan benar-benar menumpuk.
-3. **Arena mengikuti viewport** (`get_viewport_rect()`), bukan kotak tetap 720×1280, supaya layar
+3. **Kartu upgrade acak** menggantikan tier otomatis (lihat §6).
+4. **Arena mengikuti viewport** (`get_viewport_rect()`), bukan kotak tetap 720×1280, supaya layar
    9:20 tidak menyisakan pita kosong.
 
 Detail lengkap + tabel sweep ada di `projects/bertahan/docs/devlog-i1.md`.

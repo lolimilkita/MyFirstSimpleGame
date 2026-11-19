@@ -148,6 +148,66 @@ def make_ground():
     return px
 
 
+
+
+# ------------------------------------------------------------------ app icon
+def make_icon(size=512):
+    px = canvas(size, size)
+    c = size / 2.0
+    s = size / 512.0
+    for y in range(size):
+        for x in range(size):
+            d = math.hypot(x - c, y - c) / (size * 0.62)
+            k = max(0.0, min(1.0, d))
+            px[y][x] = (int(22 * (1 - k) + 9 * k), int(32 * (1 - k) + 14 * k),
+                        int(28 * (1 - k) + 10 * k), 255)
+
+    def blob(cx, cy, r, fill, ring=8):
+        disc(px, cx * s, cy * s, (r + ring) * s, OUTLINE)
+        disc(px, cx * s, cy * s, r * s, fill)
+
+    blob(118, 150, 60, (107, 142, 35, 255))
+    blob(118, 130, 30, (85, 107, 47, 255), 6)
+    blob(400, 178, 52, (107, 142, 35, 255))
+    blob(400, 162, 26, (85, 107, 47, 255), 6)
+
+    blob(256, 336, 104, (43, 96, 132, 255), 10)
+    blob(256, 336, 62, (66, 140, 184, 255), 6)
+    blob(256, 238, 66, (196, 148, 108, 255), 8)
+    blob(256, 214, 50, (72, 54, 40, 255), 6)
+
+    rect(px, int(296 * s), int(310 * s), int(456 * s), int(352 * s), OUTLINE)
+    rect(px, int(306 * s), int(320 * s), int(456 * s), int(342 * s), (58, 58, 66, 255))
+    rect(px, int(318 * s), int(324 * s), int(452 * s), int(332 * s), (120, 120, 132, 255))
+    return px
+
+
+def make_adaptive_fg(size=432):
+    px = canvas(size, size)
+    c = size / 2.0
+    disc(px, c, c + 26, 74, (43, 96, 132, 255))
+    disc(px, c, c + 26, 45, (66, 140, 184, 255))
+    disc(px, c, c - 34, 48, (196, 148, 108, 255))
+    disc(px, c, c - 52, 36, (72, 54, 40, 255))
+    rect(px, int(c + 40), int(c + 16), int(c + 104), int(c + 38), (52, 52, 58, 255))
+    outline(px)
+    return px
+
+
+def make_adaptive_bg(size=432):
+    px = canvas(size, size)
+    c = size / 2.0
+    for y in range(size):
+        for x in range(size):
+            d = math.hypot(x - c, y - c) / (size * 0.7)
+            k = max(0.0, min(1.0, d))
+            px[y][x] = (int(24 * (1 - k) + 10 * k), int(34 * (1 - k) + 15 * k),
+                        int(28 * (1 - k) + 11 * k), 255)
+    for i in range(0, size, 48):
+        rect(px, i, 0, i, size - 1, (30, 42, 34, 255))
+    return px
+
+
 # --------------------------------------------------------------------- audio
 SR = 22050
 
@@ -231,6 +291,16 @@ def main():
     for name, px in sprites.items():
         write_png(os.path.join(SPRITE_DIR, name), len(px[0]), len(px), px)
         print("sprite:", name, f"{len(px[0])}x{len(px)}")
+    icons = {
+        "icon_512.png": make_icon(512),
+        "adaptive_fg.png": make_adaptive_fg(432),
+        "adaptive_bg.png": make_adaptive_bg(432),
+    }
+    icon_dir = os.path.join(ROOT, "assets", "icon")
+    os.makedirs(icon_dir, exist_ok=True)
+    for name, px in icons.items():
+        write_png(os.path.join(icon_dir, name), len(px[0]), len(px), px)
+        print("icon:", name, f"{len(px[0])}x{len(px)}")
     build_audio()
     print("sfx: 6 file")
 
