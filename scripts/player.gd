@@ -21,12 +21,12 @@ var aim := Vector2.RIGHT
 
 # --- stat yang bisa diubah kartu upgrade ---
 var fire_interval := 0.35
-var range_px := 260.0
+var range_px := 195.0
 var shots := 1
 var pierce := 0
 var damage := 1
 var move_mult := 1.0
-var magnet := 120.0
+var magnet := 90.0
 
 @onready var _sprite: Sprite2D = $Sprite2D
 
@@ -37,7 +37,7 @@ func _ready() -> void:
 
 
 func set_arena(a: Rect2) -> void:
-	BOUNDS = Rect2(a.position, a.size).grow(-40.0)
+	BOUNDS = Rect2(a.position, a.size).grow(-36.0)
 	_reset_pos = Vector2(a.size.x * 0.5, a.size.y * 0.7)
 
 
@@ -51,12 +51,12 @@ func reset() -> void:
 	dragging = false
 	visible = true
 	fire_interval = 0.35
-	range_px = 260.0
+	range_px = 195.0
 	shots = 1
 	pierce = 0
 	damage = 1
 	move_mult = 1.0
-	magnet = 120.0
+	magnet = 90.0
 	position = _reset_pos
 	hp_changed.emit(hp)
 
@@ -81,7 +81,7 @@ func apply_upgrade(id: String, _stacks: int) -> void:
 		"damage":
 			damage += 1
 		"range":
-			range_px = minf(520.0, range_px * 1.18)
+			range_px = minf(390.0, range_px * 1.18)
 
 
 func heal(n: int) -> void:
@@ -142,7 +142,7 @@ func _fire() -> void:
 			off = (float(i) - float(shots - 1) * 0.5) * 0.16
 		var d := Vector2.from_angle(base + off)
 		var b := BULLET_SCENE.instantiate()
-		b.position = position + d * 22.0
+		b.position = position + d * 16.0
 		b.direction = d
 		b.pierce = pierce
 		b.damage = damage
@@ -179,7 +179,7 @@ func _take_hit(area: Node2D) -> void:
 	invuln = 1.0
 	var d := position - area.position
 	if d.length() > 0.01:
-		knock = d.normalized() * 260.0
+		knock = d.normalized() * 195.0
 	hp_changed.emit(hp)
 	if game != null:
 		game._sfx("hurt", -4.0)

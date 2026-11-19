@@ -28,6 +28,17 @@ pilih satu (Tembak Cepat, Peluru Ganda, Peluru Tembus, Kaki Ringan, Darah Tebal,
 Bidik Jauh). Ambang level: 8 kill pertama, lalu `kill + 6 + level×2`. Pola ini mengikuti Brotato
 (4 pilihan per level, bertingkat) dan Vampire Survivors/Archero (pause → pilih 1 dari beberapa kartu).
 
+## Kompatibilitas Android
+
+| | |
+|---|---|
+| minSdk | 24 (Android 7.0) |
+| targetSdk / compileSdk | 36 |
+| Diuji pada | **Android 14 (API 34)** — emulator Google APIs x86_64 |
+| ABI | arm64-v8a (HP) + x86_64 (emulator) |
+
+APK berjalan di Android 7 sampai 16; targetSdk tinggi hanya memengaruhi perilaku di perangkat baru.
+
 ## Status
 
 Proyek berada di **iterasi I3**: kartu upgrade acak dan ikon 512/adaptive sudah masuk, APK debug
@@ -87,7 +98,7 @@ python3 tools/gen_assets.py
 ## Spesifikasi teknis
 
 - Godot 4.7.2, renderer **Compatibility** (OpenGL 3.3) untuk kompatibilitas HP lama
-- Viewport 720×1280, stretch `canvas_items` / `expand`, portrait
+- Viewport **540×1200**, stretch `canvas_items` / `expand`, portrait (karakter tampil 1,33× lebih besar)
 - Maksimum 55 zombie + 60 peluru di layar; separation O(n²) sederhana
 - Semua balancing di `scripts/game.gd` (interval spawn, HP scaling, tabel upgrade)
 
