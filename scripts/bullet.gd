@@ -1,8 +1,8 @@
 extends Area2D
 ## Peluru lurus, bisa menembus (pierce) beberapa zombie.
 
-const SPEED := 675.0
-const MAX_RANGE := 240.0
+const SPEED := 500.0
+const MAX_RANGE := 180.0
 
 var direction := Vector2.RIGHT
 var pierce := 0

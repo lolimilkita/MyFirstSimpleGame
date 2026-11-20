@@ -98,7 +98,7 @@ python3 tools/gen_assets.py
 ## Spesifikasi teknis
 
 - Godot 4.7.2, renderer **Compatibility** (OpenGL 3.3) untuk kompatibilitas HP lama
-- Viewport **540×1200**, stretch `canvas_items` / `expand`, portrait (karakter tampil 1,33× lebih besar)
+- Viewport **400×889**, stretch `canvas_items` / `expand`, portrait (karakter ±24% lebar layar, setara jempol orang dewasa)
 - Maksimum 55 zombie + 60 peluru di layar; separation O(n²) sederhana
 - Semua balancing di `scripts/game.gd` (interval spawn, HP scaling, tabel upgrade)
 

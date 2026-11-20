@@ -55,12 +55,12 @@ func _process(delta: float) -> void:
 
 
 func _card_rect(i: int) -> Rect2:
-	var h := 150.0
-	var gap := 26.0
+	var h := 104.0
+	var gap := 16.0
 	var n := _cards.size()
 	var total := float(n) * h + float(n - 1) * gap
-	var top := size.y * 0.5 - total * 0.5 + 30.0
-	return Rect2(42.0, top + float(i) * (h + gap), size.x - 84.0, h)
+	var top := size.y * 0.5 - total * 0.5 + 22.0
+	return Rect2(24.0, top + float(i) * (h + gap), size.x - 48.0, h)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -84,10 +84,10 @@ func _draw() -> void:
 	var white := Color("eceff1")
 	var grey := Color("90a4ae")
 
-	draw_string(font, Vector2(30.0, 74.0), "SKOR %d" % game.score, HORIZONTAL_ALIGNMENT_LEFT, -1.0, 40, white)
-	draw_string(font, Vector2(30.0, 106.0), "REKOR %d" % best, HORIZONTAL_ALIGNMENT_LEFT, -1.0, 22, grey)
-	draw_string(font, Vector2(196.0, 106.0), "LV %d" % game.level, HORIZONTAL_ALIGNMENT_LEFT, -1.0, 22, Color("ffd54f"))
-	draw_string(font, Vector2(30.0, 138.0), "KILL %d" % game.kills, HORIZONTAL_ALIGNMENT_LEFT, -1.0, 22, grey)
+	draw_string(font, Vector2(24.0, 56.0), "SKOR %d" % game.score, HORIZONTAL_ALIGNMENT_LEFT, -1.0, 28, white)
+	draw_string(font, Vector2(24.0, 80.0), "REKOR %d" % best, HORIZONTAL_ALIGNMENT_LEFT, -1.0, 15, grey)
+	draw_string(font, Vector2(150.0, 80.0), "LV %d" % game.level, HORIZONTAL_ALIGNMENT_LEFT, -1.0, 15, Color("ffd54f"))
+	draw_string(font, Vector2(24.0, 102.0), "KILL %d" % game.kills, HORIZONTAL_ALIGNMENT_LEFT, -1.0, 15, grey)
 
 	var hp := 3
 	var max_hp := 3
@@ -96,7 +96,7 @@ func _draw() -> void:
 		max_hp = game.player.max_hp
 	for i in max_hp:
 		var c := Color("ef5350") if i < hp else Color("37474f")
-		draw_rect(Rect2(30.0 + float(i) * 42.0, 154.0, 30.0, 30.0), c, true)
+		draw_rect(Rect2(24.0 + float(i) * 30.0, 114.0, 22.0, 22.0), c, true)
 
 	if _arrow_t > 0.0 and _arrow_side >= 0:
 		_draw_arrow()
@@ -104,7 +104,7 @@ func _draw() -> void:
 	if _toast_t > 0.0 and _toast_text != "":
 		var a := clampf(_toast_t / 0.6, 0.0, 1.0)
 		draw_string(font, Vector2(0.0, size.y * 0.26), _toast_text,
-			HORIZONTAL_ALIGNMENT_CENTER, size.x, 34, Color(1.0, 0.85, 0.3, a))
+			HORIZONTAL_ALIGNMENT_CENTER, size.x, 24, Color(1.0, 0.85, 0.3, a))
 
 	if not _cards.is_empty():
 		_draw_cards(font)
@@ -113,26 +113,26 @@ func _draw() -> void:
 	if game_over:
 		draw_rect(Rect2(0.0, 0.0, size.x, size.y), Color(0.0, 0.0, 0.0, 0.6), true)
 		draw_string(font, Vector2(0.0, size.y * 0.40), "GAME OVER",
-			HORIZONTAL_ALIGNMENT_CENTER, size.x, 62, Color("ef5350"))
+			HORIZONTAL_ALIGNMENT_CENTER, size.x, 44, Color("ef5350"))
 		draw_string(font, Vector2(0.0, size.y * 0.48), "Skor: %d" % game.score,
-			HORIZONTAL_ALIGNMENT_CENTER, size.x, 44, white)
+			HORIZONTAL_ALIGNMENT_CENTER, size.x, 30, white)
 		if game.score >= best and game.score > 0:
 			draw_string(font, Vector2(0.0, size.y * 0.535), "REKOR BARU!",
-				HORIZONTAL_ALIGNMENT_CENTER, size.x, 30, Color("ffd54f"))
+				HORIZONTAL_ALIGNMENT_CENTER, size.x, 22, Color("ffd54f"))
 		else:
 			draw_string(font, Vector2(0.0, size.y * 0.535), "Rekor: %d" % best,
-				HORIZONTAL_ALIGNMENT_CENTER, size.x, 28, grey)
+				HORIZONTAL_ALIGNMENT_CENTER, size.x, 20, grey)
 		draw_string(font, Vector2(0.0, size.y * 0.62), "Ketuk untuk coba lagi",
-			HORIZONTAL_ALIGNMENT_CENTER, size.x, 30, grey)
+			HORIZONTAL_ALIGNMENT_CENTER, size.x, 22, grey)
 
 
 func _draw_cards(font: Font) -> void:
 	draw_rect(Rect2(0.0, 0.0, size.x, size.y), Color(0.0, 0.0, 0.0, 0.72), true)
 	var n := _cards.size()
-	var total := float(n) * 150.0 + float(n - 1) * 26.0
-	var top := size.y * 0.5 - total * 0.5 + 30.0
-	draw_string(font, Vector2(0.0, top - 26.0), "NAIK LEVEL %d — PILIH 1" % game.level,
-		HORIZONTAL_ALIGNMENT_CENTER, size.x, 30, Color("ffd54f"))
+	var total := float(n) * 104.0 + float(n - 1) * 16.0
+	var top := size.y * 0.5 - total * 0.5 + 22.0
+	draw_string(font, Vector2(0.0, top - 18.0), "NAIK LEVEL %d — PILIH 1" % game.level,
+		HORIZONTAL_ALIGNMENT_CENTER, size.x, 22, Color("ffd54f"))
 
 	for i in _cards.size():
 		var u: Dictionary = _cards[i]
@@ -141,14 +141,14 @@ func _draw_cards(font: Font) -> void:
 		draw_rect(r, Color(0.10, 0.13, 0.16, 0.98), true)
 		draw_rect(r, accent, false, 3.0)
 		draw_rect(Rect2(r.position.x, r.position.y, 10.0, r.size.y), accent, true)
-		draw_string(font, r.position + Vector2(34.0, 58.0), String(u["title"]),
-			HORIZONTAL_ALIGNMENT_LEFT, -1.0, 34, Color("ffffff"))
-		draw_string(font, r.position + Vector2(34.0, 104.0), String(u["desc"]),
-			HORIZONTAL_ALIGNMENT_LEFT, -1.0, 22, Color("b0bec5"))
+		draw_string(font, r.position + Vector2(24.0, 40.0), String(u["title"]),
+			HORIZONTAL_ALIGNMENT_LEFT, -1.0, 24, Color("ffffff"))
+		draw_string(font, r.position + Vector2(24.0, 72.0), String(u["desc"]),
+			HORIZONTAL_ALIGNMENT_LEFT, -1.0, 15, Color("b0bec5"))
 		var stacks := int(game._stacks.get(u["id"], 0))
-		draw_string(font, r.position + Vector2(r.size.x - 130.0, 58.0),
+		draw_string(font, r.position + Vector2(r.size.x - 96.0, 40.0),
 			"Lv %d/%d" % [stacks + 1, int(u["max"])],
-			HORIZONTAL_ALIGNMENT_LEFT, -1.0, 20, accent)
+			HORIZONTAL_ALIGNMENT_LEFT, -1.0, 14, accent)
 
 
 func _draw_arrow() -> void:

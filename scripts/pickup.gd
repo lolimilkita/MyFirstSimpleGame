@@ -17,7 +17,7 @@ func _ready() -> void:
 	if kind == "health":
 		$Sprite2D.texture = MEDKIT
 		var shape := CircleShape2D.new()
-		shape.radius = 20.0
+		shape.radius = 28.0
 		$CollisionShape2D.shape = shape
 
 

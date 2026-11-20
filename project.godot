@@ -10,8 +10,8 @@ config/icon="res://assets/icon/icon_512.png"
 
 [display]
 
-window/size/viewport_width=540
-window/size/viewport_height=1200
+window/size/viewport_width=400
+window/size/viewport_height=889
 window/handheld/orientation=1
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"

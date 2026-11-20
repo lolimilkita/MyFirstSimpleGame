@@ -53,8 +53,8 @@ def disc(px, cx, cy, r, col):
 
 
 def rect(px, x0, y0, x1, y1, col):
-    for y in range(y0, y1 + 1):
-        for x in range(x0, x1 + 1):
+    for y in range(int(y0), int(y1) + 1):
+        for x in range(int(x0), int(x1) + 1):
             put(px, x, y, col)
 
 
@@ -73,63 +73,67 @@ def outline(px, col=OUTLINE):
 
 
 # ------------------------------------------------------------------- sprites
-def make_survivor():
-    px = canvas(16, 16)
-    disc(px, 8, 9, 5.4, (43, 96, 132, 255))      # badan / jaket biru
-    disc(px, 8, 9, 3.4, (66, 140, 184, 255))     # highlight jaket
-    rect(px, 11, 8, 15, 9, (52, 52, 58, 255))    # laras pistol
-    rect(px, 13, 8, 15, 8, (96, 96, 104, 255))   # kilau laras
-    disc(px, 8, 6, 3.1, (196, 148, 108, 255))    # kepala (top-down)
-    disc(px, 8, 5, 2.2, (72, 54, 40, 255))       # rambut
+K = 2  # resolusi sprite 2x agar tetap tajam saat di-zoom
+
+
+def make_survivor(k=K):
+    S = 16 * k
+    px = canvas(S, S)
+    disc(px, 8 * k, 9 * k, 5.4 * k, (43, 96, 132, 255))
+    disc(px, 8 * k, 9 * k, 3.4 * k, (66, 140, 184, 255))
+    rect(px, 11 * k, 8 * k, 15 * k, 9 * k, (52, 52, 58, 255))
+    rect(px, 13 * k, 8 * k, 15 * k, 8 * k, (110, 110, 120, 255))
+    disc(px, 8 * k, 6 * k, 3.1 * k, (196, 148, 108, 255))
+    disc(px, 8 * k, 5 * k, 2.2 * k, (72, 54, 40, 255))
     outline(px)
     return px
 
 
-def make_zombie(body, head, arms, size=16, r=5.6):
-    px = canvas(size, size)
+def make_zombie(body, head, arms, size=16, r=5.6, k=K):
+    px = canvas(size * k, size * k)
     c = size / 2.0
-    disc(px, c, c + 1.2, r, body)
-    disc(px, c, c + 1.2, r * 0.55, head)
-    rect(px, int(c - r) - 1, int(c), int(c - r) + 1, int(c) + 3, arms)
-    rect(px, int(c + r) - 1, int(c), int(c + r) + 1, int(c) + 3, arms)
+    disc(px, c * k, (c + 1.2) * k, r * k, body)
+    disc(px, c * k, (c + 1.2) * k, r * 0.55 * k, head)
+    rect(px, (c - r - 1) * k, c * k, (c - r + 1) * k, (c + 3) * k, arms)
+    rect(px, (c + r - 1) * k, c * k, (c + r + 1) * k, (c + 3) * k, arms)
     outline(px)
     return px
 
 
-def make_brute():
-    px = canvas(24, 24)
-    disc(px, 12, 13, 8.6, (93, 64, 55, 255))
-    disc(px, 12, 13, 5.2, (121, 85, 72, 255))
-    disc(px, 12, 9, 4.0, (161, 136, 127, 255))
-    rect(px, 2, 13, 6, 18, (78, 52, 46, 255))
-    rect(px, 18, 13, 22, 18, (78, 52, 46, 255))
+def make_brute(k=K):
+    px = canvas(24 * k, 24 * k)
+    disc(px, 12 * k, 13 * k, 8.6 * k, (93, 64, 55, 255))
+    disc(px, 12 * k, 13 * k, 5.2 * k, (121, 85, 72, 255))
+    disc(px, 12 * k, 9 * k, 4.0 * k, (161, 136, 127, 255))
+    rect(px, 2 * k, 13 * k, 6 * k, 18 * k, (78, 52, 46, 255))
+    rect(px, 18 * k, 13 * k, 22 * k, 18 * k, (78, 52, 46, 255))
     outline(px)
     return px
 
 
-def make_coin():
-    px = canvas(12, 12)
-    disc(px, 6, 6, 5.0, (255, 213, 79, 255))
-    disc(px, 6, 6, 3.4, (255, 179, 0, 255))
-    disc(px, 6, 5, 1.8, (255, 236, 179, 255))
+def make_coin(k=K):
+    px = canvas(12 * k, 12 * k)
+    disc(px, 6 * k, 6 * k, 5.0 * k, (255, 213, 79, 255))
+    disc(px, 6 * k, 6 * k, 3.4 * k, (255, 179, 0, 255))
+    disc(px, 6 * k, 5 * k, 1.8 * k, (255, 236, 179, 255))
     outline(px)
     return px
 
 
-def make_medkit():
-    px = canvas(14, 12)
-    rect(px, 1, 2, 12, 10, (236, 239, 241, 255))
-    rect(px, 1, 2, 12, 3, (207, 216, 220, 255))
-    rect(px, 5, 4, 8, 9, (229, 57, 53, 255))
-    rect(px, 3, 6, 10, 7, (229, 57, 53, 255))
+def make_medkit(k=K):
+    px = canvas(14 * k, 12 * k)
+    rect(px, 1 * k, 2 * k, 12 * k, 10 * k, (236, 239, 241, 255))
+    rect(px, 1 * k, 2 * k, 12 * k, 3 * k, (207, 216, 220, 255))
+    rect(px, 5 * k, 4 * k, 8 * k, 9 * k, (229, 57, 53, 255))
+    rect(px, 3 * k, 6 * k, 10 * k, 7 * k, (229, 57, 53, 255))
     outline(px)
     return px
 
 
-def make_bullet():
-    px = canvas(4, 8)
-    rect(px, 0, 1, 3, 6, (255, 224, 130, 255))
-    rect(px, 1, 0, 2, 0, (255, 255, 255, 255))
+def make_bullet(k=K):
+    px = canvas(4 * k, 8 * k)
+    rect(px, 0, 1 * k, 3 * k, 6 * k, (255, 224, 130, 255))
+    rect(px, 1 * k, 0, 2 * k, 0, (255, 255, 255, 255))
     outline(px, (120, 90, 20, 255))
     return px
 
@@ -146,8 +150,6 @@ def make_ground():
         x, y = rnd.randrange(2, 29), rnd.randrange(2, 29)
         rect(px, x, y, x + rnd.randrange(1, 4), y, (30, 34, 39, 255))
     return px
-
-
 
 
 # ------------------------------------------------------------------ app icon

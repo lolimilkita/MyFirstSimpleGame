@@ -16,9 +16,9 @@ const SFX := {
 }
 
 const Z_TYPES := {
-	"walker": {"hp": 1, "speed": 60.0, "score": 10, "scale": 2.6, "radius": 17.0},
-	"runner": {"hp": 1, "speed": 99.0, "score": 15, "scale": 2.3, "radius": 14.0},
-	"brute": {"hp": 6, "speed": 42.0, "score": 40, "scale": 2.0, "radius": 22.0},
+	"walker": {"hp": 1, "speed": 45.0, "score": 10, "scale": 3.2, "radius": 36.0},
+	"runner": {"hp": 1, "speed": 73.0, "score": 15, "scale": 2.8, "radius": 30.0},
+	"brute": {"hp": 6, "speed": 31.0, "score": 40, "scale": 2.4, "radius": 50.0},
 }
 
 const UPGRADE_POOL := [
@@ -32,12 +32,12 @@ const UPGRADE_POOL := [
 	{"id": "range", "title": "BIDIK JAUH", "desc": "+18% jangkauan tembak", "max": 3, "weight": 1, "color": Color("90caf9")},
 ]
 
-const MAX_ZOMBIES := 45
+const MAX_ZOMBIES := 18
 const MAX_PICKUPS := 14
 const HORDE_EVERY := 75.0
 const SAVE_PATH := "user://save.cfg"
 
-var START_INTERVAL := 0.35
+var START_INTERVAL := 0.55
 var MIN_INTERVAL := 0.10
 var INTERVAL_DECAY := 0.90
 const SPEED_GROWTH := 1.03
@@ -165,7 +165,7 @@ func _spawn_zombie() -> void:
 func _spawn_zombie_at(side: int, type_name: String) -> void:
 	if zombies_root.get_child_count() >= MAX_ZOMBIES:
 		return
-	var margin := 45.0
+	var margin := 34.0
 	var p := Vector2.ZERO
 	match side:
 		0:

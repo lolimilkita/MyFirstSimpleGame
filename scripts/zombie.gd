@@ -6,7 +6,7 @@ const TEX := {
 	"runner": preload("res://assets/sprites/zombie_runner.png"),
 	"brute": preload("res://assets/sprites/zombie_brute.png"),
 }
-const SEPARATION_RADIUS := 30.0
+const SEPARATION_RADIUS := 56.0
 
 var ztype := "walker"
 var hp := 1

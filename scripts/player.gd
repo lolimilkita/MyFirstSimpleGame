@@ -21,23 +21,23 @@ var aim := Vector2.RIGHT
 
 # --- stat yang bisa diubah kartu upgrade ---
 var fire_interval := 0.35
-var range_px := 195.0
+var range_px := 145.0
 var shots := 1
 var pierce := 0
 var damage := 1
 var move_mult := 1.0
-var magnet := 90.0
+var magnet := 65.0
 
 @onready var _sprite: Sprite2D = $Sprite2D
 
 
 func _ready() -> void:
 	area_entered.connect(_on_area_entered)
-	_sprite.scale = Vector2(2.6, 2.6)
+	_sprite.scale = Vector2(4.5, 4.5)
 
 
 func set_arena(a: Rect2) -> void:
-	BOUNDS = Rect2(a.position, a.size).grow(-36.0)
+	BOUNDS = Rect2(a.position, a.size).grow(-46.0)
 	_reset_pos = Vector2(a.size.x * 0.5, a.size.y * 0.7)
 
 
@@ -51,12 +51,12 @@ func reset() -> void:
 	dragging = false
 	visible = true
 	fire_interval = 0.35
-	range_px = 195.0
+	range_px = 145.0
 	shots = 1
 	pierce = 0
 	damage = 1
 	move_mult = 1.0
-	magnet = 90.0
+	magnet = 65.0
 	position = _reset_pos
 	hp_changed.emit(hp)
 
@@ -81,7 +81,7 @@ func apply_upgrade(id: String, _stacks: int) -> void:
 		"damage":
 			damage += 1
 		"range":
-			range_px = minf(390.0, range_px * 1.18)
+			range_px = minf(290.0, range_px * 1.18)
 
 
 func heal(n: int) -> void:
@@ -126,7 +126,8 @@ func _physics_process(delta: float) -> void:
 			fire_cd = fire_interval
 			_fire()
 
-	_sprite.rotation = lerp_angle(_sprite.rotation, aim.angle(), 12.0 * delta)
+	# sprite sengaja tidak diputar: pada zoom besar, rotasi membuat karakter terlihat jungkir balik
+	_sprite.rotation = 0.0
 
 
 func _fire() -> void:
@@ -142,7 +143,7 @@ func _fire() -> void:
 			off = (float(i) - float(shots - 1) * 0.5) * 0.16
 		var d := Vector2.from_angle(base + off)
 		var b := BULLET_SCENE.instantiate()
-		b.position = position + d * 16.0
+		b.position = position + d * 55.0
 		b.direction = d
 		b.pierce = pierce
 		b.damage = damage
@@ -179,7 +180,7 @@ func _take_hit(area: Node2D) -> void:
 	invuln = 1.0
 	var d := position - area.position
 	if d.length() > 0.01:
-		knock = d.normalized() * 195.0
+		knock = d.normalized() * 145.0
 	hp_changed.emit(hp)
 	if game != null:
 		game._sfx("hurt", -4.0)
