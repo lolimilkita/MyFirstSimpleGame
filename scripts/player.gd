@@ -33,7 +33,7 @@ var magnet := 65.0
 
 func _ready() -> void:
 	area_entered.connect(_on_area_entered)
-	_sprite.scale = Vector2(4.5, 4.5)
+	_sprite.scale = Vector2(2.8, 2.8)
 
 
 func set_arena(a: Rect2) -> void:
@@ -143,7 +143,7 @@ func _fire() -> void:
 			off = (float(i) - float(shots - 1) * 0.5) * 0.16
 		var d := Vector2.from_angle(base + off)
 		var b := BULLET_SCENE.instantiate()
-		b.position = position + d * 55.0
+		b.position = position + d * 34.0
 		b.direction = d
 		b.pierce = pierce
 		b.damage = damage

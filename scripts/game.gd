@@ -16,9 +16,9 @@ const SFX := {
 }
 
 const Z_TYPES := {
-	"walker": {"hp": 1, "speed": 45.0, "score": 10, "scale": 3.2, "radius": 36.0},
-	"runner": {"hp": 1, "speed": 73.0, "score": 15, "scale": 2.8, "radius": 30.0},
-	"brute": {"hp": 6, "speed": 31.0, "score": 40, "scale": 2.4, "radius": 50.0},
+	"walker": {"hp": 1, "speed": 45.0, "score": 10, "scale": 2.0, "radius": 22.0},
+	"runner": {"hp": 1, "speed": 73.0, "score": 15, "scale": 1.75, "radius": 19.0},
+	"brute": {"hp": 6, "speed": 31.0, "score": 40, "scale": 1.5, "radius": 33.0},
 }
 
 const UPGRADE_POOL := [
@@ -32,12 +32,12 @@ const UPGRADE_POOL := [
 	{"id": "range", "title": "BIDIK JAUH", "desc": "+18% jangkauan tembak", "max": 3, "weight": 1, "color": Color("90caf9")},
 ]
 
-const MAX_ZOMBIES := 18
+const MAX_ZOMBIES := 30
 const MAX_PICKUPS := 14
 const HORDE_EVERY := 75.0
 const SAVE_PATH := "user://save.cfg"
 
-var START_INTERVAL := 0.55
+var START_INTERVAL := 0.45
 var MIN_INTERVAL := 0.10
 var INTERVAL_DECAY := 0.90
 const SPEED_GROWTH := 1.03
